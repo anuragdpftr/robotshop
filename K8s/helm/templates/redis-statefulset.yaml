@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    service: redis
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        service: redis
+    spec:
+      hostAliases:
+      - ip: "34.223.192.252"
+        hostnames:
+        - "eksv18.defcert.df.io"
+      {{ if .Values.psp.enabled }}
+      serviceAccountName: robot-shop
+      {{ end }}
+      containers:
+      - name: redis
+        image: redis:6.2.6-buster
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+          - name: data
+            mountPath: /mnt/redis
+        resources:
+          limits:
+            cpu: 200m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+      restartPolicy: Always
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        {{ if not .Values.openshift }}
+        storageClassName: {{ .Values.redis.storageClassName }}
+        volumeMode: Filesystem
+        {{ end }}
+        resources:
+          requests:
+            storage: 1Gi
+
