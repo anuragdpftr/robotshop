@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:buster
 
 ENV INSTANA_AUTO_PROFILE true
 

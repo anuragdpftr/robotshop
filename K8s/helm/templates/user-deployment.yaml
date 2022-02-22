@@ -15,9 +15,9 @@ spec:
         service: user
     spec:
       hostAliases:
-      - ip: "34.223.192.252"
+      - ip: "52.25.210.166"
         hostnames:
-        - "eksv18.defcert.df.io"
+        - "asp.eksv21.deepfactor.io"
       {{ if .Values.psp.enabled }}
       serviceAccountName: robot-shop
       {{ end }}
